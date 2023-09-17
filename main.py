@@ -35,17 +35,20 @@ def listening():
         print("Listening for an input....")
         recognizer.adjust_for_ambient_noise(source) # making sure that no ambient noise gets in the way of the input
         audio = recognizer.listen(source)
+        print(audio)
     return audio
 
 def recognize_command(audio):
     try:
-        command = recognizer.recognize_sphinx(audio) # try and understand the audio using sphinx which finds words from audio
+        command = recognizer.recognize_sphinx(audio)
         print(command)
         return command
     except sr.UnknownValueError:
         print("Sorry, the audio could not be understood.")
+        return ""  # return an empty string instead of None
     except sr.RequestError:
         print("Sorry, there are technical difficulties with sphinx.")
+        return "" 
 
 def play_music(command):
     music_keywords = ["play", "song", "artist", "by"]
@@ -145,12 +148,15 @@ def make_phone_call(contact):
 def execute_command(command):
     if "play" in command:
         play_music(command)
+        return "Playing music"
     elif "temperature" in command or "degrees" in command or "ac" in command:
         adjust_temperature(command)
+        return "Adjusting temperature"
     elif "call" in command or "dial" in command:
         can_we_make_phone_call(command)
+        return "Making phone call"
     else:
-        speak("Sorry, I dont understand that command")
+        return "Sorry, I don't understand that command"
     
 if __name__ == "__main__":
     while True:
@@ -160,3 +166,5 @@ if __name__ == "__main__":
         response = execute_command(command)  # Execute the command and get a response
         print("Car Assistant:", response)
         speak(response)  # Speak the response
+        break
+        
